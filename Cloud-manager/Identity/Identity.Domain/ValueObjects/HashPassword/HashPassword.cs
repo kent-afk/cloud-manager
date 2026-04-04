@@ -1,4 +1,4 @@
-namespace Identity.Domain.HashPassword;
+namespace Identity.Domain.ValueObjects.HashPassword;
 
 public record HashPassword()
 {
@@ -10,7 +10,7 @@ public record HashPassword()
     {
         if (string.IsNullOrEmpty(hash))
         {
-            throw new ArgumentException("Password can't be null or empty");
+            throw new System.ArgumentException("Password can't be null or empty");
         }
 
         return new HashPassword();

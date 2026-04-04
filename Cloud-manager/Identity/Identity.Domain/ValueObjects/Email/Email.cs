@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace Identity.Domain.Email;
+namespace Identity.Domain.ValueObjects.Email;
 
 public record Email()
 {
@@ -13,13 +13,13 @@ public record Email()
     {
         if (string.IsNullOrEmpty(value))
         {
-            throw new ArgumentException("Email can't be null or empty");
+            throw new System.ArgumentException("Email can't be null or empty");
         }
 
         if (EmailRegex.IsMatch(value))
         {
             return new Email(value);
         }
-        throw new ArgumentException("Invalid email format");
+        throw new System.ArgumentException("Invalid email format");
     }
 }
