@@ -1,7 +1,7 @@
 using Identity.Domain.ValueObjects.Email;
 using Identity.Domain.ValueObjects.HashPassword;
 
-namespace Identity.Domain.Users;
+namespace Identity.Domain.Entities.Users;
 
 public interface IUserType
 {
