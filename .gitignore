@@ -8,6 +8,7 @@ obj/
 *.suo
 *.cache
 *.log
+*.xml
 
 # NuGet
 packages/
@@ -19,6 +20,12 @@ packages/
 .idea/
 *.user
 *.suo
+**/bin/
+**/obj/
+**/.vs/
+**/.idea/
+**/[Dd]ebug/
+**/[Rr]elease/
 
 # Build results
 [Dd]ebug/
@@ -36,6 +43,8 @@ bld/
 
 # Rider
 .idea/
+**/.idea/
+**/.idea*/
 
 # User-specific files
 *.suo
