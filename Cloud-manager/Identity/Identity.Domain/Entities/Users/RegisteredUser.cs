@@ -3,14 +3,20 @@ using Identity.Domain.ValueObjects.HashPassword;
 
 namespace Identity.Domain.Entities.Users;
 
-public class RegisteredUser(Email email, HashPassword hashPassword, System.Guid userId) : IUserType
+public abstract class RegisteredUser
 {
-
-    public Email Email { get; private set; } = email;
-    public HashPassword HashPassword { get; private set; } = hashPassword;
+    public Email Email { get; private set; }
+    public HashPassword HashPassword { get; private set; }
     
-    public System.Guid UserId { get; } = userId;
+    public System.Guid UserId { get; private set; }
 
+    public RegisteredUser(Email email, HashPassword hashPassword, System.Guid userId)
+    {
+        Email = email;
+        HashPassword = hashPassword;
+        UserId = userId;
+    }
+    
     private RegisteredUser() : this(default!,  default!, default!) {}
     
     public void ChangePassword(HashPassword passwordHash)

@@ -18,6 +18,6 @@ public class RegisteredUserService(IUserRepository userRepository)
             throw new UserAlreadyExist(email);
         }
 
-        return new RegisteredUser(email, hashPassword, Guid.NewGuid());
+        return new RegularUser(email, hashPassword, Guid.NewGuid());
     }
 }
