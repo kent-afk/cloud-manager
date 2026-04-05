@@ -13,7 +13,7 @@ public class RegisteredUserService(IUserRepository userRepository)
     public async Task<RegisteredUser> RegisterAsync(Email email, HashPassword hashPassword)
     {
 
-        if (await userRepository.UserExist(email))
+        if (await userRepository.UserExistAsync(email))
         {
             throw new UserAlreadyExist(email);
         }
