@@ -1,6 +1,6 @@
 namespace Identity.Domain.Events;
 
-public class UserRegisteredEvent
+public class User_Registered_Event
 {
     
 }

@@ -2,4 +2,4 @@ using Identity.Domain.ValueObjects.Email;
 
 namespace Identity.Domain.Events;
 
-public record EmailChangedDomainEvent(System.Guid UserId, Email NewEmail);
+public record Email_Changed_Domain_Event(System.Guid UserId, Email NewEmail);

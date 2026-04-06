@@ -26,7 +26,7 @@ public class RabbitMQEventPublisher : IEventPublisher
         var body = Encoding.UTF8.GetBytes(json);
         
         await channel.BasicPublishAsync(
-            route, // send queue
+            "identity-events", 
             route,
             body);
             
