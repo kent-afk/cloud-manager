@@ -56,3 +56,4 @@ bld/
 appsettings.*.json
 !appsettings.json
 !appsettings.Development.json
+.env
