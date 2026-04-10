@@ -4,7 +4,7 @@ using Identity.Domain.Entities.Users;
 using Identity.Domain.ValueObjects.Email;
 using Microsoft.EntityFrameworkCore;
 
-namespace Identity.Infrastructure.Persistance;
+namespace Identity.Infrastructure.Persistance.Repository;
 
 public class UserRepository : IUserRepository // adapter to port
 {

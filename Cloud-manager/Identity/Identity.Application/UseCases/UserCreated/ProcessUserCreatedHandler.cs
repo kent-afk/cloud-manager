@@ -4,10 +4,10 @@ using MediatR;
 
 namespace Identity.Application.UseCases.UserCreated;
 
-public class ProcessUserCreatedHandler : IRequestHandler<ProcessUserCreatedCommand> 
+public class ProcessUserCreatedHandler : IRequestHandler<ProcessUserCreatedCommand>
 {
-    public Task Handle(ProcessUserCreatedCommand request, CancellationToken cancellationToken)
+    public async Task Handle(ProcessUserCreatedCommand request, CancellationToken cancellationToken)
     {
-        throw new System.NotImplementedException();
+        throw new System.NotImplementedException(); //TODO
     }
 }
