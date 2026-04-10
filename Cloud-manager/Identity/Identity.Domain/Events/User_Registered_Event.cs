@@ -1,6 +1,5 @@
+using System;
+
 namespace Identity.Domain.Events;
 
-public class User_Registered_Event
-{
-    
-}
+public record User_Registered_Event(Guid ClientId, string Email);
