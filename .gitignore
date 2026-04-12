@@ -55,5 +55,4 @@ bld/
 # Secrets
 appsettings.*.json
 !appsettings.json
-!appsettings.Development.json
 .env
