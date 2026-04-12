@@ -30,6 +30,6 @@ public class UserCreatedConsumer
         await using var scope = _serviceProvider.CreateAsyncScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
         
-        await mediator.Send(new ProcessUserCreatedCommand(@event));
+        await mediator.Send(new RegisterUserCommand(@event));
     }
 }

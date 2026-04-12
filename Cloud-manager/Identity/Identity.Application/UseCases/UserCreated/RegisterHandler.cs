@@ -10,18 +10,18 @@ using Prometheus.Client.MetricServer;
 
 namespace Identity.Application.UseCases.UserCreated;
 
-public class ProcessUserCreatedHandler : IRequestHandler<ProcessUserCreatedCommand>
+public class RegisterHandler : IRequestHandler<RegisterUserCommand>
 {
     private IHubContext _context;
     private IMetricFamily<ICounter> _usersCounter;
     private IEmailSender _emailSender;
-    ILogger<ProcessUserCreatedHandler> _logger;
+    ILogger<RegisterHandler> _logger;
 
-    public ProcessUserCreatedHandler(
+    public RegisterHandler(
         IHubContext context, 
         IMetricFactory metricsFactory,
         IEmailSender emailSender,
-        ILogger<ProcessUserCreatedHandler> logger)
+        ILogger<RegisterHandler> logger)
     {
         _context = context;
         _usersCounter = metricsFactory.CreateCounter(
@@ -33,7 +33,7 @@ public class ProcessUserCreatedHandler : IRequestHandler<ProcessUserCreatedComma
         _logger = logger;
     }
 
-    public async Task Handle(ProcessUserCreatedCommand request, CancellationToken cancellationToken)
+    public async Task Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
         var userId = request.Event.ClientId.ToString();
         
@@ -45,5 +45,5 @@ public class ProcessUserCreatedHandler : IRequestHandler<ProcessUserCreatedComma
         
         _usersCounter.Inc();
         _logger.LogInformation($"User {userId} Created: Successfully");
-    }
+    }   
 }
