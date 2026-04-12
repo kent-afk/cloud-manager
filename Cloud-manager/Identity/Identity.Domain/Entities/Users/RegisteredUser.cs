@@ -17,7 +17,7 @@ public abstract class RegisteredUser
         UserId = userId;
     }
     
-    private RegisteredUser() : this(default!,  default!, default!) {}
+    private RegisteredUser() : this(default!, default!, default!) {}
     
     public void ChangePassword(HashPassword passwordHash)
     {
