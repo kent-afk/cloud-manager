@@ -7,8 +7,8 @@ namespace Identity.Application.UseCases.LoginUser;
 
 public class LoginHandler : IRequestHandler<LoginUserCommand, Result<string>>
 {
-    private IUserRepository _userRepository;
-    private IJwtGenerator _jwtGenerator;
+    private readonly IUserRepository _userRepository;
+    private readonly IJwtGenerator _jwtGenerator;
     
     public LoginHandler(IUserRepository userRepository, IJwtGenerator jwtGenerator)
     {

@@ -1,14 +1,11 @@
-using System;
 using System.Text;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 using Identity.Domain.Events.Publisher;
 using RabbitMQ.Client;
 
 namespace Identity.Infrastructure.Communicating.Publishers;
 
-public class RabbitMQEventPublisher : IEventPublisher
+public sealed class RabbitMqEventPublisher : IEventPublisher
 {
     private readonly IConnection _connection;
     private readonly SemaphoreSlim _lock = new(1, 1); // 1 chanel 
@@ -16,7 +13,7 @@ public class RabbitMQEventPublisher : IEventPublisher
     private IChannel? Channel { get; set; }
     
     
-    public RabbitMQEventPublisher(IConnection connection, string exchange = "identity-events")
+    public RabbitMqEventPublisher(IConnection connection, string exchange = "identity-events")
     {
         _connection = connection;
         _exchange = exchange;

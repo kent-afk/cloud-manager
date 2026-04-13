@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Identity.Infrastructure.Persistence.Repository;
 
-public class UserRepository : IUserRepository // adapter to port
+public sealed class UserRepository : IUserRepository // adapter to port
 {
     private readonly ApplicationDbContext _context;
     

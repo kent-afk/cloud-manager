@@ -12,10 +12,10 @@ namespace Identity.Application.UseCases.UserCreated;
 
 public class RegisterHandler : IRequestHandler<RegisterUserCommand>
 {
-    private IHubContext _context;
-    private IMetricFamily<ICounter> _usersCounter;
+    private readonly IHubContext _context;
+    private readonly IMetricFamily<ICounter> _usersCounter;
     private IEmailSender _emailSender;
-    ILogger<RegisterHandler> _logger;
+    private readonly ILogger<RegisterHandler> _logger;
 
     public RegisterHandler(
         IHubContext context, 

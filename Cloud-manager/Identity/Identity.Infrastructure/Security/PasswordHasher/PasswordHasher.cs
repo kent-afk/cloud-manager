@@ -3,7 +3,7 @@ using Identity.Domain.ValueObjects.HashPassword;
 
 namespace Identity.Infrastructure.Security.PasswordHasher;
 
-public class PasswordHasher : IPasswordHasher
+public sealed class PasswordHasher : IPasswordHasher
 {
     public HashPassword Hash(string password)
     {
