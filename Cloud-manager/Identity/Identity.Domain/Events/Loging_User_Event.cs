@@ -3,4 +3,4 @@ using Identity.Domain.ValueObjects.HashPassword;
 
 namespace Identity.Domain.Events;
 
-public record Loging_User_Event(Email Email, HashPassword HashPassword);
+public record Loging_User_Event(Email Email, string HashPassword);
