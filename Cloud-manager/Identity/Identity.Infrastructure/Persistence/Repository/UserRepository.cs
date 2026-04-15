@@ -27,9 +27,20 @@ public sealed class UserRepository : IUserRepository // adapter to port
         return await _context.Users.AnyAsync(x => x.Email == email);
     }
 
-    public async Task<bool> UserExistAsync(Email email, HashPassword password)
+
+    public async Task<RegisteredUser?> GetByIdAsync(Guid userId)
     {
-         return await _context.Users.AnyAsync(x => x.Email == email) && 
-             await _context.Users.AnyAsync(x => x.HashPassword == password);
+        return await _context.Users.FirstOrDefaultAsync(x => x.UserId == userId);
+    }
+
+    public async Task UpdateAsync(RegisteredUser user)
+    { 
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<RegisteredUser?> GetByEmailAsync(Email email)
+    {
+        return await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
     }
 }

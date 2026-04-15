@@ -9,5 +9,10 @@ public interface IUserRepository
 {
     Task AddAsync(RegisteredUser user);
     Task<bool> EmailExistAsync(Email email);
-    Task<bool> UserExistAsync(Email email, HashPassword password);
+    
+    Task<RegisteredUser?> GetByIdAsync(Guid userId);
+    
+    Task UpdateAsync(RegisteredUser user);
+    
+    Task<RegisteredUser?> GetByEmailAsync(Email email);
 }
