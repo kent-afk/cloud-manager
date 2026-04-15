@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Identity.Application.Ports.JwtGenerator;
+using Identity.Domain.Entities.Users;
 using Identity.Domain.ValueObjects;
 using Identity.Domain.ValueObjects.Email;
 using Identity.Domain.ValueObjects.HashPassword;
@@ -19,15 +20,15 @@ public class GeneratorJwt : IJwtGenerator
         _configuration = configuration;
     }
 
-    public string GenerateToken(Email email, HashPassword password)
+    public string GenerateToken(RegisteredUser user)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? string.Empty)); // 
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
         {
-            new Claim("email", email.Value),
-            new Claim("hash", password.Value),
+            new Claim("email", user.Email.ToString()),
+            new Claim("hash", user.HashPassword.ToString()),
         };
 
         var token = new JwtSecurityToken(
