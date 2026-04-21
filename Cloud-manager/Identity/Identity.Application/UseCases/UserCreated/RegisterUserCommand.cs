@@ -1,6 +1,6 @@
-using Identity.Domain.Events;
+using Identity.Domain.ValueObjects.Result;
 using MediatR;
 
 namespace Identity.Application.UseCases.UserCreated;
 
-public record RegisterUserCommand(User_Registered_Event Event) : IRequest;
+public record RegisterUserCommand(string Email, string Password) : IRequest<Result<string>>;

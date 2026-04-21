@@ -1,6 +1,9 @@
 using Identity.Application.Ports.JwtGenerator;
 using Identity.Domain.Entities.PasswordHasher;
 using Identity.Domain.Entities.UserRepository;
+using Identity.Domain.Events;
+using Identity.Domain.Events.Publisher;
+using Identity.Domain.ValueObjects.Email;
 using Identity.Domain.ValueObjects.Result;
 using MediatR;
 
@@ -11,18 +14,21 @@ public class LoginHandler : IRequestHandler<LoginUserCommand, Result<string>>
     private readonly IUserRepository _userRepository;
     private readonly IJwtGenerator _jwtGenerator;
     private readonly IPasswordHasher _passwordHasher;
+    private readonly IEventPublisher  _eventPublisher;
     
-    public LoginHandler(IUserRepository userRepository, IJwtGenerator jwtGenerator, IPasswordHasher passwordHasher)
+    public LoginHandler(IUserRepository userRepository, IJwtGenerator jwtGenerator, IPasswordHasher passwordHasher, IEventPublisher eventPublisher)
     {
         _userRepository = userRepository;
         _jwtGenerator = jwtGenerator;
         _passwordHasher = passwordHasher;
+        _eventPublisher = eventPublisher;
     }
 
     public async Task<Result<string>> Handle(LoginUserCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetByEmailAsync(request.Event.Email);
+        var user = await _userRepository.GetByEmailAsync(Email.Create(request.Email));
+        
         if (user == null)
         {
             return new Result<string>(
@@ -30,7 +36,7 @@ public class LoginHandler : IRequestHandler<LoginUserCommand, Result<string>>
                 ErrorMessage:"Invalid password or email");
         }
         
-        bool verify = _passwordHasher.Verify(request.Event.HashPassword, user.HashPassword.Value);
+        bool verify = _passwordHasher.Verify(request.Password, user.HashPassword.Value);
         if (!verify)
         {
             return new Result<string>(false,
@@ -38,6 +44,10 @@ public class LoginHandler : IRequestHandler<LoginUserCommand, Result<string>>
         }
 
         string token = _jwtGenerator.GenerateToken(user);
+        
+        await _eventPublisher.PublishAsync(
+            new Loging_User_Event(user.UserId, user.Email.Value),
+            cancellationToken);
         
         return new Result<string>(true, token);
     }
