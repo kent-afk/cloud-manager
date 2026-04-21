@@ -3,17 +3,14 @@ using System.Security.Claims;
 using System.Text;
 using Identity.Application.Ports.JwtGenerator;
 using Identity.Domain.Entities.Users;
-using Identity.Domain.ValueObjects;
-using Identity.Domain.ValueObjects.Email;
-using Identity.Domain.ValueObjects.HashPassword;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Identity.Infrastructure.Authentication.JwtGenerator;
 
-public class GeneratorJwt : IJwtGenerator
+public sealed class GeneratorJwt : IJwtGenerator
 {
-    private IConfiguration _configuration;
+    private readonly IConfiguration _configuration;
 
     public GeneratorJwt(IConfiguration configuration)
     {
