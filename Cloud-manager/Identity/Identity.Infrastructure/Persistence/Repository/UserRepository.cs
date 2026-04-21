@@ -1,7 +1,7 @@
 using Identity.Domain.Entities.UserRepository;
 using Identity.Domain.Entities.Users;
 using Identity.Domain.ValueObjects.Email;
-using Identity.Domain.ValueObjects.HashPassword;
+using Identity.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
 
 namespace Identity.Infrastructure.Persistence.Repository;
@@ -15,10 +15,10 @@ public sealed class UserRepository : IUserRepository // adapter to port
         _context = context;
     }
 
-    public async Task AddAsync(RegisteredUser user) // async for I/O 
+    public async Task AddAsync(RegisteredUser user, CancellationToken cancellationToken) // async for I/O 
     { 
-        await _context.Users.AddAsync(user);
-        await _context.SaveChangesAsync(); // commit changes in db
+        await _context.Users.AddAsync(user, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken); // commit changes in db
         // no return, background status
     }
 
@@ -33,10 +33,10 @@ public sealed class UserRepository : IUserRepository // adapter to port
         return await _context.Users.FirstOrDefaultAsync(x => x.UserId == userId);
     }
 
-    public async Task UpdateAsync(RegisteredUser user)
+    public async Task UpdateAsync(RegisteredUser user, CancellationToken cancellationToken)
     { 
         _context.Users.Update(user);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<RegisteredUser?> GetByEmailAsync(Email email)

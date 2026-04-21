@@ -3,7 +3,7 @@ using Identity.Domain.ValueObjects.Email;
 using Identity.Domain.ValueObjects.HashPassword;
 using Microsoft.EntityFrameworkCore;
 
-namespace Identity.Infrastructure.Persistence;
+namespace Identity.Infrastructure.Persistence.DbContexts;
 
 public class ApplicationDbContext : DbContext 
 {
