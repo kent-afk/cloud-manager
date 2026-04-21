@@ -1,11 +1,12 @@
 using System.Text;
 using System.Text.Json;
+using Identity.Domain.Events;
 using Identity.Domain.Events.Publisher;
 using RabbitMQ.Client;
 
 namespace Identity.Infrastructure.Communicating.Publishers;
 
-public sealed class RabbitMqEventPublisher : IEventPublisher
+public sealed class RabbitMqEventPublisher : IEventPublisher, IAsyncDisposable
 {
     private readonly IConnection _connection;
     private readonly SemaphoreSlim _lock = new(1, 1); // 1 chanel 
@@ -50,11 +51,10 @@ public sealed class RabbitMqEventPublisher : IEventPublisher
         }
     }
     
-    public async Task PublishAsync<TEvent>(TEvent @event) where TEvent : class // problem srp create chanel + publish
+    public async Task PublishAsync(IEvent @event, CancellationToken cancellationToken)
     {
         var channel = await GetChannelAsync();
-        string queueName = @event.GetType().Name.ToLower();
-        
+
         var json = JsonSerializer.Serialize(@event); 
         var body = Encoding.UTF8.GetBytes(json);
 
@@ -70,15 +70,25 @@ public sealed class RabbitMqEventPublisher : IEventPublisher
         {
             await channel.BasicPublishAsync(
                 _exchange,
-                queueName,
+                @event.Route,
                 mandatory: true, // support messages without queue 
                 prop,
-                body);
+                body,
+                cancellationToken);
         }
         catch (Exception e)
         {
             await Console.Error.WriteLineAsync($"{DateTime.Now} [ERROR] nack saw or publish exception: {e}");
             throw;
         }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_lock is IAsyncDisposable lockAsyncDisposable)
+            await lockAsyncDisposable.DisposeAsync();
+        else
+            _lock.Dispose();
+        if (Channel != null) await Channel.DisposeAsync();
     }
 }
