@@ -25,19 +25,23 @@ public class PasswordChangeHandle : IRequestHandler<PasswordChangeCommand, Resul
     public async Task<Result<string>> Handle(PasswordChangeCommand request,
         CancellationToken cancellationToken)
     {
-        var email = Email.Create(request.Email);
-        var user = await _userRepository.GetByEmailAsync(email); // ID -> Email 
+        var email = Email.Create(request.Email).Value;
+        
+        if (email is null)
+            return Result<string>.Failure("Password or Email address does not match");
+        
+        var user = await _userRepository.GetByEmailAsync(email, cancellationToken); // ID -> Email 
         
         if (user == null)
-            return new Result<string>(false, null, "User not found");
+            return Result<string>.Failure("Password or Email does not match");
         
         if (!_passwordHasher.Verify(request.OldPassword, user.HashPassword.Value))
         {
-            return new Result<string>(false, null, "Old password does not match");
+            return Result<string>.Failure("Password or Email does not match");
         }
 
         if (_passwordHasher.Verify(request.NewPassword, user.HashPassword.Value))
-            return new Result<string>(false, null, "Password repeated");
+            return  Result<string>.Failure("Password repeated");
 
         var newPasswordHash = _passwordHasher.Hash(request.NewPassword);
         
@@ -45,13 +49,15 @@ public class PasswordChangeHandle : IRequestHandler<PasswordChangeCommand, Resul
 
         await _userRepository.UpdateAsync(user, cancellationToken);
 
+        var emailRequest = Email.Create(request.Email).Value;
+        if (emailRequest is null)
+            return Result<string>.Failure("Email address does not match");
+        
         await _eventPublisher.PublishAsync(new Password_Change_Event(
-                Email.Create(request.Email),
+                emailRequest,
                 newPasswordHash.Value),
             cancellationToken);
         
-        return new Result<string>(true, 
-            "Password successfully changed", // TODO 
-            ErrorMessage:"Password changed");
+        return Result<string>.Success("Password changed");
     }
 }

@@ -17,8 +17,12 @@ public class RegisterHandler : IRequestHandler<RegisterUserCommand, Result<strin
     private readonly IUserRepository _userRepository;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IEventPublisher  _eventPublisher;
+    
     public RegisterHandler(
-        ILogger<RegisterHandler> logger, IPasswordHasher passwordHasher, IUserRepository userRepository, IEventPublisher eventPublisher)
+        ILogger<RegisterHandler> logger,
+        IPasswordHasher passwordHasher,
+        IUserRepository userRepository,
+        IEventPublisher eventPublisher)
     {
         _logger = logger;
         _passwordHasher = passwordHasher;
@@ -28,33 +32,36 @@ public class RegisterHandler : IRequestHandler<RegisterUserCommand, Result<strin
 
     public async Task<Result<string>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
-            var email = Email.Create(request.Email);
-          
-            var exist = await _userRepository.GetByEmailAsync(email);
+            var email = Email.Create(request.Email).Value;
+            if (email is null)
+                return Result<string>.Failure("Email address does not exist");
+            
+            var exist = await _userRepository.GetByEmailAsync(email, cancellationToken);
             
             if (exist is not null)
             {
-                _logger.LogError($"User with email {email} already exist");
-                return new Result<string>(false, ErrorMessage: "User Already Exist");
+                return Result<string>.Failure("User Already Exist");
             }
 
             if (request.Password == string.Empty)
             { 
-                _logger.LogError($"User with email {email} does not have a password");
-                return new Result<string>(false, ErrorMessage: "User need a password");
+                return Result<string>.Failure("Password or Email does not match");
             }
 
             var passwordHash = _passwordHasher.Hash(request.Password);
 
             var id = Guid.NewGuid();
+
+            var user = new RegularUser(email, passwordHash, id);
             
-            await _userRepository.AddAsync(new RegularUser(email, passwordHash, id), cancellationToken);
+            await _userRepository.AddAsync(user, cancellationToken);
             
             await _eventPublisher.PublishAsync(
                 new User_Registered_Event(id, email.Value), 
                 cancellationToken);
             
-            return new Result<string>(true,
-                _userRepository.GetByEmailAsync(email).ToString()); // TODO
+            _logger.LogError($"User with email {email} created");
+            
+            return  Result<string>.Success("User created");
     }   
 }

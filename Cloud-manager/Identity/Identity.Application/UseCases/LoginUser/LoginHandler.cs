@@ -16,7 +16,11 @@ public class LoginHandler : IRequestHandler<LoginUserCommand, Result<string>>
     private readonly IPasswordHasher _passwordHasher;
     private readonly IEventPublisher  _eventPublisher;
     
-    public LoginHandler(IUserRepository userRepository, IJwtGenerator jwtGenerator, IPasswordHasher passwordHasher, IEventPublisher eventPublisher)
+    public LoginHandler(
+        IUserRepository userRepository,
+        IJwtGenerator jwtGenerator,
+        IPasswordHasher passwordHasher,
+        IEventPublisher eventPublisher)
     {
         _userRepository = userRepository;
         _jwtGenerator = jwtGenerator;
@@ -27,20 +31,24 @@ public class LoginHandler : IRequestHandler<LoginUserCommand, Result<string>>
     public async Task<Result<string>> Handle(LoginUserCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetByEmailAsync(Email.Create(request.Email));
+        var email = Email.Create(request.Email).Value;
+        
+        if (email is null)
+        {
+            return Result<string>.Failure("Email is not valid.");
+        }
+        
+        var user = await _userRepository.GetByEmailAsync(email, cancellationToken);
         
         if (user == null)
         {
-            return new Result<string>(
-                false,
-                ErrorMessage:"Invalid password or email");
+            return Result<string>.Failure("Invalid password or email");
         }
         
         bool verify = _passwordHasher.Verify(request.Password, user.HashPassword.Value);
         if (!verify)
         {
-            return new Result<string>(false,
-                ErrorMessage:"Invalid password or email");
+            return  Result<string>.Failure("Invalid password or email");
         }
 
         string token = _jwtGenerator.GenerateToken(user);
@@ -49,6 +57,6 @@ public class LoginHandler : IRequestHandler<LoginUserCommand, Result<string>>
             new Loging_User_Event(user.UserId, user.Email.Value),
             cancellationToken);
         
-        return new Result<string>(true, token);
+        return Result<string>.Success(token);
     }
 }
