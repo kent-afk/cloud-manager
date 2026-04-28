@@ -19,6 +19,8 @@ public class ApplicationDbContext : DbContext
     {
         modelBuilder.Entity<RegisteredUser>(entity => //entity is API to construct 
         {
+            entity.HasDiscriminator<string>("UserType").HasValue<RegularUser>(nameof(RegisteredUser));
+            
             entity.HasKey(u => u.UserId); //primary key
 
             entity.Property(u => u.UserId)
@@ -31,7 +33,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(u => u.Email)
                 .HasConversion(
                 v => v.Value, // Save value object -> string (in db)
-                v => Email.Create(v) // Load from db -> value object
+                v => Email.Create(v).Value // Load from db -> value object
                 ).HasColumnName("Email")
                 .IsRequired();
 
