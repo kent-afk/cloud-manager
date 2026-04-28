@@ -20,7 +20,7 @@ public sealed class RabbitMqEventPublisher : IEventPublisher, IAsyncDisposable
         _exchange = exchange;
     }
 
-    public async Task<IChannel> GetChannelAsync()
+    private async Task<IChannel> GetChannelAsync()
     {
         if (Channel is { IsOpen: true }) return Channel;
         
