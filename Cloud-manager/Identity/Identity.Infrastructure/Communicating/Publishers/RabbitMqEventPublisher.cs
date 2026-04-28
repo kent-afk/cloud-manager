@@ -71,7 +71,7 @@ public sealed class RabbitMqEventPublisher : IEventPublisher, IAsyncDisposable
             await channel.BasicPublishAsync(
                 _exchange,
                 @event.Route,
-                mandatory: true, // support messages without queue 
+                mandatory: false, // support messages without queue //TODO
                 prop,
                 body,
                 cancellationToken);
