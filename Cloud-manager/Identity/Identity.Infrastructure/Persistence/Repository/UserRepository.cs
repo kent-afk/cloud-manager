@@ -22,15 +22,17 @@ public sealed class UserRepository : IUserRepository // adapter to port
         // no return, background status
     }
 
-    public async Task<bool> EmailExistAsync(Email email)
+    public async Task<bool> EmailExistAsync(Email email, CancellationToken cancellationToken)
     {
-        return await _context.Users.AnyAsync(x => x.Email == email);
+        return await _context.Users.AnyAsync(x => x.Email == email,
+            cancellationToken: cancellationToken);
     }
 
 
-    public async Task<RegisteredUser?> GetByIdAsync(Guid userId)
+    public async Task<RegisteredUser?> GetByIdAsync(Guid userId, CancellationToken cancellationToken)
     {
-        return await _context.Users.FirstOrDefaultAsync(x => x.UserId == userId);
+        return await _context.Users.FirstOrDefaultAsync(x => x.UserId == userId, 
+            cancellationToken: cancellationToken);
     }
 
     public async Task UpdateAsync(RegisteredUser user, CancellationToken cancellationToken)
@@ -39,8 +41,9 @@ public sealed class UserRepository : IUserRepository // adapter to port
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<RegisteredUser?> GetByEmailAsync(Email email)
+    public async Task<RegisteredUser?> GetByEmailAsync(Email email, CancellationToken cancellationToken)
     {
-        return await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+        return await _context.Users.FirstOrDefaultAsync(x => x.Email == email, 
+            cancellationToken: cancellationToken);
     }
 }
